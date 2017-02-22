@@ -41,7 +41,7 @@ class Item{
 			qty+=amt;
 		}
 		void item_issued(int amt=1){
-			qty-+amt;
+			this->qty-=amt;
 		}
 };
 class List{
@@ -68,76 +68,76 @@ class List{
 			list.push_back(x);
 			return true;
 		}
-		Item search(int c){
+		Item* search(int c){
 			for(int i=0;i<list.size();i++){
 				if(list[i].get_code()==c){
-					return list[i];
+					return &list[i];
 				}
 			}
-			return Item(-1,"",0,0);
+			return NULL;
 		}
-		Item search(string n){
+		Item* search(string n){
 			for(int i=0;i<list.size();i++){
 				if(list[i].get_name()==n){
-					return list[i];
+					return &list[i];
 				}
 			}
-			return Item(-1,"",0,0);
+			return NULL;
 		}
 		bool update_rate(int c,float r){
-			Item x=search(c);
-			if(x.get_code()==-1){
+			Item* x=search(c);
+			if(x==NULL){
 				cout<<"Item not found";
 				return false;
 			}else{
-				cout<<"Item Name: "<<x.get_name();
-				x.update_rate(r);
+				cout<<"Item Name: "<<x->get_name();
+				x->update_rate(r);
 			}return true;
 		}
 		bool update_rate(string n,float r){
-			Item x=search(n);
-			if(x.get_code()==-1){
+			Item* x=search(n);
+			if(x==NULL){
 				cout<<"Item not found"<<endl;
 				return false;
 			}else{
-				x.update_rate(r);
+				x->update_rate(r);
 			}return true;
 		}
 		bool query(int code){
-			Item x=search(code);
-			if(x.get_code()==-1){
+			Item* x=search(code);
+			if(x==NULL){
 				cout<<"Item not found"<<endl;
 				return false;
 			}else{
-				x.display_item();
+				x->display_item();
 				return true;
 			}
 		}
 		void query(string name){
-			Item x=search(name);
-			if(x.get_code()==-1){
+			Item* x=search(name);
+			if(x==NULL){
 				cout<<"Item not found"<<endl;
 			}else{
-				x.display_item();
+				x->display_item();
 			}
 		}
 		bool issue(int c,int q){
-			Item x=search(c);
-			if(x.get_code()==-1){
+			Item* x=search(c);
+			if(x==NULL){
 				cout<<"Item not found"<<endl;
 				return false;
 			}else{
-				x.item_issued(q);  
+				x->item_issued(q);  
 				return true;
 			}
 		}
 		bool receive(int c,int q){
-			Item x=search(c);
-			if(x.get_code()==-1){
+			Item* x=search(c);
+			if(x==NULL){
 				cout<<"Item not found"<<endl;
 				return false;
 			}else{
-				x.item_received(q);  
+				x->item_received(q);  
 				return true;
 			}
 		} 
@@ -150,11 +150,11 @@ class List{
 };
 int main(){
 	List Amazon;
-	Amazon.add_item(Item(123,"Chocolate",40.0,44));
-	Amazon.add_item(Item(124,"Vanilla",10.3,234));
-	Amazon.add_item(Item(125,"Butterscotch",10.3,234));
-	Amazon.add_item(Item(126,"Black Current",10.3,234));
-	Amazon.add_item(Item(127,"Two In One",10.3,234));
+	Amazon.add_item(Item(123,"Chocolate"    ,40.0,44));
+	Amazon.add_item(Item(124,"Vanilla"      ,20.0,102));
+	Amazon.add_item(Item(125,"Butterscotch" ,30.0,321));
+	Amazon.add_item(Item(126,"Black Current",50.0,2));
+	Amazon.add_item(Item(127,"Two In One"   ,10.0,4));
 	int choice;
 	while(1)
 	{

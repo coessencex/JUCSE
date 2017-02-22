@@ -1,4 +1,4 @@
-#include <string>
+
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -19,6 +19,17 @@ class Journal{
 		void display_journal(){
 			cout<<id<<"\t"<<name<<"\t\t"<<date<<"\t"<<vol<<"\t"<<copies<<"\t"<<endl;
 		}
+		void write() {
+			fstream fjournal_list;
+			fjournal_list.open("Journal_list.txt", ios::app);
+			fjournal_list << endl;
+			fjournal_list << id << endl;
+			fjournal_list << name << endl;
+			fjournal_list << date << endl;
+			fjournal_list << vol << endl;
+			fjournal_list << copies << endl;
+			fjournal_list.close();
+		}
 };
 class Book{
 	int id;
@@ -34,8 +45,16 @@ class Book{
 		void display_book(){
 			cout<<id<<"\t"<<name<<"\t\t"<<copies<<endl;
 		}
+		void write() {
+			fstream fbook_list;
+			fbook_list.open("Book_list.txt", ios::app);
+			fbook_list << endl;
+			fbook_list << id << endl;
+			fbook_list << name << endl;
+			fbook_list << copies << endl;
+			fbook_list.close();
+		}
 };
-
 class Student{
 	int roll;
 	string name;
@@ -50,15 +69,35 @@ class Student{
 			}
 
 		} 
+		int get_roll(){
+			return roll;
+		}
 		void display_student(){
 			cout<<"Roll: "<<roll<<endl;
 			cout<<"Name: "<<name<<endl;
 			cout<<"Books issued: ";
-			for (int i = 0; i < 2; ++i)
-			{
-				if(issued_books[i]!=0)
+			bool flag=true;
+			for (int i = 0; i < 2; ++i){
+				if(issued_books[i]!=0){
 					cout<<issued_books[i]<<" ";
-			}cout<<endl;
+					flag=false;
+				}
+			}
+			if(flag)
+				cout<<"None";
+			cout<<endl;
+		}
+		void write() {
+			fstream fstudent_list;
+			fstudent_list.open("Student_list.txt", ios::app);
+			fstudent_list << endl;
+			fstudent_list << roll << endl;
+			fstudent_list << name << endl;
+			for (int i = 0; i < 2; i++) {
+				fstudent_list << issued_books[i] << " ";
+			}
+			fstudent_list << endl;
+			fstudent_list.close();
 		}
 		void return_book(int fine_days,int card_no){
 			cout<<"Your fine due is Rs "<<fine_days;
@@ -99,21 +138,53 @@ class Faculty{
 				issued_journals[i]=ij[i];
 			}
 		}
+		int get_roll(){
+			return roll;
+		}
 		void display_faculty(){
 			cout<<"Roll: "<<roll<<endl;
 			cout<<"Name: "<<name<<endl;
 			cout<<"Books issued: ";
+			bool flag=true;
 			for (int i = 0; i < 10; ++i)
 			{
-				if(issued_books[i]!=0)
+				if(issued_books[i]!=0){				
 					cout<<issued_books[i]<<" ";
+					flag=false;
+				}
+			}
+			if(flag){
+				cout<<"None";
 			}cout<<endl;
+			
+			flag=true;
 			cout<<"Journal issued: ";
 			for (int i = 0; i < 10; ++i)
 			{
-				if(issued_journals[i]!=0)
+				if(issued_journals[i]!=0){
 					cout<<issued_journals[i]<<" ";
+					flag=false;
+				}
+			}
+			if(flag){
+				cout<<"None";
 			}cout<<endl;
+		}
+		void write() {
+			fstream ffaculty_list;
+			ffaculty_list.open("Faculty_list.txt", ios::app);
+			ffaculty_list << endl;
+			ffaculty_list << roll << endl;
+			ffaculty_list << name << endl;
+			for (int i = 0; i < 10; i++) {
+				ffaculty_list << issued_books[i] << " ";
+			}
+			ffaculty_list << endl;
+			for (int i = 0; i < 10; i++) {
+				ffaculty_list << issued_journals[i] << " ";
+			}
+			ffaculty_list << endl;
+			ffaculty_list.close();
 		}
 		bool issue_book(int id,int card_no){
 			if(issued_books[card_no-1]!=0){
@@ -140,12 +211,17 @@ class Faculty{
 			issued_journals[card_no-1]=0;
 		}
 };
+class Transactions{
+
+};
 class Library{
 	private:
 		vector<Book> book_list;
 		vector<Journal> journal_list;
 		vector<Student> student_list;
 		vector<Faculty> faculty_list;
+
+		//LOADING INITIAL DATA
 		void load_book_list(){
 			fstream fbook_list;
 			fbook_list.open("Book_list.txt",ios::in);
@@ -158,6 +234,7 @@ class Library{
 				book_list.push_back(new_book);
 			}
 			fbook_list.close();
+			book_list.pop_back();
 		}
 		void load_journal_list(){
 			fstream fjournal_list;
@@ -173,6 +250,7 @@ class Library{
 				journal_list.push_back(new_journal);
 			}
 			fjournal_list.close();
+			journal_list.pop_back();
 		}
 		void load_student_list(){
 			fstream fstudent_list;
@@ -189,6 +267,7 @@ class Library{
 				student_list.push_back(new_student);
 			}
 			fstudent_list.close();
+			student_list.pop_back();
 		}
 		void load_faculty_list(){
 			fstream ffaculty_list;
@@ -211,13 +290,40 @@ class Library{
 				faculty_list.push_back(new_faculty);
 			}
 			ffaculty_list.close();
+			faculty_list.pop_back();
 		}
 		
+		//DUMP FINAL DATA
+		void dump_book_list() {
+			fstream f;f.open("Book_list.txt", ios::out);f.close();
+			for (vector<Book>::iterator i = book_list.begin(); i !=book_list.end(); i++){
+				i->write();
+			}
+		}
+		void dump_journal_list() {
+			fstream f;f.open("Journal_list.txt", ios::out);f.close();
+			for (vector<Journal>::iterator i = journal_list.begin(); i != journal_list.end(); i++) {
+				i->write();
+			}
+		}
+		void dump_student_list() {
+			fstream f;f.open("Student_list.txt", ios::out);f.close();
+			for (vector<Student>::iterator i = student_list.begin(); i != student_list.end(); i++) {
+				i->write();
+			}
+		}
+		void dump_faculty_list() {
+			fstream f;f.open("Faculty_list.txt",ios::out);f.close();
+			for (vector<Faculty>::iterator i = faculty_list.begin(); i != faculty_list.end(); i++) {
+				i->write();
+			}
+		}
+
 		//UNFINISHED BUG VECTOR ITERATOR POINTER
-		Book* search_book(int id){
+		Book*    search_book(int id){
 			for(vector<Book>::iterator i=book_list.begin();i!=book_list.end();++i)
 				if(i->get_id()==id)
-					return NULL;
+					return i;
 			return NULL;
 		}
 		Journal* search_journal(int id){
@@ -226,35 +332,54 @@ class Library{
 					return NULL;
 			return NULL;
 		}
+		Student* search_student(int roll){
+			for(vector<Student>::iterator i=student_list.begin();i!=student_list.end();++i)
+				if(i->get_roll()==roll)
+					return NULL;
+			return NULL;
+		}
+		Faculty* search_faculty(int roll){
+			for(vector<Faculty>::iterator i=faculty_list.begin();i!=faculty_list.end();++i)
+				if(i->get_roll()==roll)
+					return NULL;
+			return NULL;
+		}
+
 	public:
-		//Constructor to load the book and journal list for the first time
-		Library(){
+		//CONSTRUCTOR TO ALL DATA FOR THE FIRST TIME
+		Library() {
 			load_book_list();
 			load_journal_list();
-			//load_student_list();
-			//load_faculty_list();
-		}	
+			load_student_list();
+			load_faculty_list();
+		}
+		~Library() {
+			dump_book_list();
+			dump_journal_list();
+			dump_student_list();
+			dump_faculty_list();
+		}
 		
-		//Adding new Books or journals and writing it to the file
+		//ADDING NEW BOOKS JOURNALS STUDENTS OR FACULTY AND WRITING IT TO THE FILE END
 		void add_book(){
 			int i,c;string n;
 			do{
 				cout<<"Enter id:";cin>>i;
 				if(search_book(i)==NULL)
 					break;
-				cout<<"Id already exist";
+				cout<<"Id already exist"<<endl;
 			}while(true);
 			cout<<"Enter name:";cin>>n;
 			cout<<"Enter #copies:";cin>>c;
 			Book new_book(i,n,c);
 			book_list.push_back(new_book);
-			fstream fbook_list;
+			/*fstream fbook_list;
 			fbook_list.open("Book_list.txt",ios::app);
 			fbook_list<<endl;
 			fbook_list<<i<<endl;
 			fbook_list<<n<<endl;
 			fbook_list<<c<<endl;
-			fbook_list.close();
+			fbook_list.close();*/
 		}
 		void add_journal(){
 			int i,c,v;string n,d;
@@ -262,7 +387,7 @@ class Library{
 				cout<<"Enter id:";cin>>i;
 				if(search_journal(i)==NULL)
 					break;
-				cout<<"Id already exist";
+				cout<<"Id already exist"<<endl;
 			}while(true);
 			cout<<"Enter name:";cin>>n;
 			cout<<"Enter volume:";cin>>v;
@@ -270,25 +395,69 @@ class Library{
 			cout<<"Enter #copies:";cin>>c;
 			Journal new_journal(i,n,d,v,c);
 			journal_list.push_back(new_journal);
-			fstream fjournal_list;
+			/*fstream fjournal_list;
 			fjournal_list.open("Journal_list.txt",ios::app);
+			fjournal_list<<endl;
 			fjournal_list<<i<<endl;
 			fjournal_list<<n<<endl;
 			fjournal_list<<d<<endl;
 			fjournal_list<<v<<endl;
 			fjournal_list<<c<<endl;
-			fjournal_list.close();
+			fjournal_list.close();*/
 		}
-
-		//-------------UNFINISHED--------------------
-		void add_student(){s
-
+		void add_student(){
+			int r;string n;int ib[2] = { 0,0 };
+			do{
+				cout<<"Enter roll:";cin>>r;
+				if(search_student(r)==NULL)
+					break;
+				cout<<"Id already exist."<<endl;
+			}while(true);
+			cout<<"Enter name:";cin>>n;			
+			Student new_student(r, n,ib);
+			student_list.push_back(new_student);
+			/*fstream fstudent_list;
+			fstudent_list.open("Student_list.txt",ios::app);
+			fstudent_list<<endl;
+			fstudent_list<<r<<endl;
+			fstudent_list<<n<<endl;
+			for (int i = 0; i < 2; i++)
+			{
+				fstudent_list << ib[i] << " " ;
+			}
+			fstudent_list << endl;
+			fstudent_list.close();*/
 		}
 		void add_faculty(){
-
+			int r;string n;int ib[10] = { 0,0,0,0,0,0,0,0,0,0 };int ij[10] = { 0,0,0,0,0,0,0,0,0,0 };
+			do {
+				cout << "Enter roll:";cin >> r;
+				if (search_faculty(r) == NULL)
+					break;
+				cout << "Id already exist." << endl;
+			} while (true);
+				cout << "Enter name:";cin >> n;
+			Faculty new_faculty(r, n, ib,ij);
+			faculty_list.push_back(new_faculty);
+			/*fstream ffaculty_list;
+			ffaculty_list.open("Faculty_list.txt", ios::app);
+			ffaculty_list << endl;
+			ffaculty_list << r << endl;
+			ffaculty_list << n << endl;
+			for (int i = 0; i < 10; i++)
+			{
+				ffaculty_list << ib[i] << " ";
+			}
+			ffaculty_list << endl;
+			for (int i = 0; i < 10; i++)
+			{
+				ffaculty_list << ij[i] << " ";
+			}
+			ffaculty_list << endl;
+			ffaculty_list.close();*/
 		}	
 		
-		//Display Book or Journal List
+		//DISPLAY WHOLE LISTS
 		void display_book_list(){
 			cout<<"-------------------BOOK LIST-------------------"<<endl;
 			cout<<"id\tnames\t\tcopies"<<endl;
@@ -315,7 +484,6 @@ class Library{
 				i->display_faculty();
 			}
 		}
-
 };
 int main(){
 	Library L;
@@ -323,5 +491,90 @@ int main(){
 	L.display_journal_list();
 	L.display_student_list();
 	L.display_faculty_list();
+	L.add_book();
+	while (true) {
+		cout << endl;
+		cout << "Enter Choice:" << endl;
+		cout << "1.Add New " << endl;
+		cout << "2.Issue Book " << endl;
+		cout << "3.Return Book " << endl;
+		cout << "4.Issue Journal" << endl;
+		cout << "5.Return Journal" << endl;
+		cout << "Any other option to exit" << endl;
+		int choice;cin >> choice;
+		switch (choice) {
+			case 1:{
+				cout << "1.Book " << endl;
+				cout << "2.Journal " << endl;
+				cout << "3.Student " << endl;
+				cout << "4.Faculty" << endl;
+				int choice2;cin >> choice2;
+				switch (choice2) {
+					case 1: {
+						L.add_book();
+						break;
+					}
+					case 2: {
+						L.add_journal();
+						break;
+					}
+					case 3: {
+						L.add_student();
+						break;
+					}
+					case 4: {
+						L.add_faculty();
+						break;
+					}
+					default:
+						break;
+				}
+				break;
+			} 
+			case 2: {
+				cout << "1.Student " << endl;
+				cout << "2.Faculty" << endl;
+				int choice2;cin >> choice2;
+				switch (choice2) {
+					case 1: {
+						//ISSUE BOOK TO STUDENT
+					}
+					case 2: {
+						//ISSUE BOOK TO FACULTY
+					}
+					default:
+						break;
+				}
+				break;
+			}
+			case 3: {
+				cout << "1.Student " << endl;
+				cout << "2.Faculty" << endl;
+				int choice2;cin >> choice2;
+				switch (choice2) {
+					case 1: {
+						//RETURN BOOK TO STUDENT
+					}
+					case 2: {
+						//RETURN BOOK TO FACULTY
+					}
+					default:
+						break;
+				}
+				break;
+			}
+			case 4: {
+				//ISSUE JOURNAL TO FACULTY
+				break;
+			}
+			case 5: {
+				//RETURN JOURNAL TO FACULTY
+				break;
+			}
+			default:
+				break;
+		}
+
+	}
 	return 0;
 }
