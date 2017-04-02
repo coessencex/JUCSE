@@ -1,8 +1,12 @@
 
 12
 Aishik
-0 0 
+1003 1002 
 
 14
 Baidik
+0 0 
+
+6
+Manosij
 0 0 

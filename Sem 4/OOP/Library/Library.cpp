@@ -3,6 +3,8 @@
 #include <iostream>
 #include <fstream>
 using namespace std;
+class Library;
+class Transactions;
 class Journal{
 	int id;
 	string name;
@@ -15,6 +17,12 @@ class Journal{
 		} 
 		int get_id(){
 			return id;
+		}
+		string get_name(){ 
+			return name;
+		}
+		int get_copies(){
+			return copies;
 		}
 		void display_journal(){
 			cout<<id<<"\t"<<name<<"\t\t"<<date<<"\t"<<vol<<"\t"<<copies<<"\t"<<endl;
@@ -30,6 +38,12 @@ class Journal{
 			fjournal_list << copies << endl;
 			fjournal_list.close();
 		}
+		void issue_journal(){
+			copies--;
+		}
+		void return_journal(){
+			copies++;
+		}
 };
 class Book{
 	int id;
@@ -42,6 +56,12 @@ class Book{
 		int get_id(){
 			return id;
 		}
+		string get_name(){ 
+			return name;
+		}
+		int get_copies(){
+			return copies;
+		}
 		void display_book(){
 			cout<<id<<"\t"<<name<<"\t\t"<<copies<<endl;
 		}
@@ -53,6 +73,12 @@ class Book{
 			fbook_list << name << endl;
 			fbook_list << copies << endl;
 			fbook_list.close();
+		}
+		void issue_book(){
+			copies--;
+		}
+		void return_book(){
+			copies++;
 		}
 };
 class Student{
@@ -71,6 +97,17 @@ class Student{
 		} 
 		int get_roll(){
 			return roll;
+		}
+		string get_name(){ 
+			return name;
+		}
+		bool is_empty(int c){
+			if(issued_books[c-1]==0){
+				return true;
+			}
+			else{
+				return false;
+			}
 		}
 		void display_student(){
 			cout<<"Roll: "<<roll<<endl;
@@ -99,9 +136,11 @@ class Student{
 			fstudent_list << endl;
 			fstudent_list.close();
 		}
-		void return_book(int fine_days,int card_no){
-			cout<<"Your fine due is Rs "<<fine_days;
+		int return_book(int card_no){
+			cout<<"Your fine due is Rs "<<0;
+			int temp=issued_books[card_no-1];
 			issued_books[card_no-1]=0;
+			return temp;
 		}
 		bool issue_book(int id,int card_no){
 			if(issued_books[card_no-1]!=0){
@@ -112,13 +151,6 @@ class Student{
 				return true;
 			}
 		}
-		/*void fine_paid(){
-			int fine;
-			cout<<"Your due fine is : "<<fine_due<<endl;
-			cout<<"Enter fine paid :";
-			cin>>fine;
-			fine_due-=fine;
-		}*/
 };
 class Faculty{
 	int roll;
@@ -140,6 +172,17 @@ class Faculty{
 		}
 		int get_roll(){
 			return roll;
+		}
+		string get_name(){ 
+			return name;
+		}
+		bool is_empty(int c){
+			if(issued_books[c-1]==0){
+				return true;
+			}
+			else{
+				return false;
+			}
 		}
 		void display_faculty(){
 			cout<<"Roll: "<<roll<<endl;
@@ -204,23 +247,113 @@ class Faculty{
 				return true;
 			}
 		}
-		void return_book(int fine_days,int card_no){
+		int return_book(int card_no){
+			int temp=issued_books[card_no-1];
 			issued_books[card_no-1]=0;
+			return temp;
 		}
-		void return_journal(int fine_days,int card_no){
-			issued_journals[card_no-1]=0;
+		int return_journal(int card_no){
+			int temp=issued_books[card_no-1];
+			issued_books[card_no-1]=0;
+			return temp;
 		}
 };
-class Transactions{
 
-};
 class Library{
+	class Transactions{
+		Library *L;
+		char issue_type;char issue_person;char transaction_type;
+		int card_no;
+		int id;
+		int roll;
+		Book* book;
+		Journal* journal;
+		Student* student;
+		Faculty* faculty;
+		string date;
+		bool bind_pointers(){
+			if(issue_type='B'){
+				journal=NULL;
+				book=L->search_book(id);
+			} else if(issue_type='J') {
+				book=NULL;
+				journal=L->search_journal(id);
+			} else {
+				return false; 
+			}
+			
+			if(issue_person='S'){
+				faculty=NULL;
+				student=L->search_student(roll);
+			} else if(issue_person='F') {
+				student=NULL;
+				faculty=L->search_faculty(id);
+			} else {
+				return false; 
+			}
+			return true;
+		}
+		void transact(){
+			if       (issue_type=='B' && issue_person=='S' && transaction_type=='I'){
+				book->issue_book();
+				student->issue_book(id,card_no);
+			} else if(issue_type=='B' && issue_person=='F' && transaction_type=='I'){
+				book->issue_book();
+				faculty->issue_book(id,card_no);
+			} else if(issue_type=='B' && issue_person=='S' && transaction_type=='R'){
+				book->return_book();
+				student->return_book(card_no);
+			} else if(issue_type=='B' && issue_person=='F' && transaction_type=='R'){
+				book->return_book();
+				faculty->return_book(card_no);
+			} else if(issue_type=='J' && issue_person=='F' && transaction_type=='I'){
+				journal->issue_journal();
+				faculty->issue_journal(id,card_no);
+			} else if(issue_type=='J' && issue_person=='F' && transaction_type=='R'){
+				journal->return_journal();
+				faculty->return_journal(card_no);
+			} 
+		}
+		public:
+			Transactions(Library *l,char it,char ip,char tt,int idT,int rollT,int card_noT) {
+				L=l;
+				issue_type=it;
+				issue_person=ip;
+				transaction_type=tt;
+				id=idT;
+				roll=rollT;
+				card_no=card_noT;
+				bind_pointers();
+				transact();
+				//ADD DATE INIT
+			}
+
+			void display_transaction(){ 
+				cout<<issue_type<<"\t"<<id<<"\t";
+				issue_type=='B'? cout<<book->get_name()<<"\t":cout<<journal->get_name()<<"\t";
+				cout<<issue_person<<"\t"<<roll<<"\t";
+				issue_person=='S'? cout<<student->get_name()<<"\t":cout<<faculty->get_name()<<"\t";
+				cout<<transaction_type<<"\t";
+				cout<<endl;
+			}
+			/*void write(){ 
+				fstream ftransaction_list;
+				ftransaction_list.open("Transaction_list.txt", ios::app);
+				ftransaction_list << endl;
+				ftransaction_list << i.get_name() << "\t";
+				ftransaction_list << p.get_name() << "\t";
+				ftransaction_list << date << "\t";
+				ftransaction_list << txn_type << "\t";
+				ftransaction_list << endl;
+				ftransaction_list.close();	
+			}*/
+	};
 	private:
 		vector<Book> book_list;
 		vector<Journal> journal_list;
 		vector<Student> student_list;
 		vector<Faculty> faculty_list;
-
+		vector<Transactions> transaction_list;
 		//LOADING INITIAL DATA
 		void load_book_list(){
 			fstream fbook_list;
@@ -292,58 +425,47 @@ class Library{
 			ffaculty_list.close();
 			faculty_list.pop_back();
 		}
+		void load_transaction_list(){ 
+
+		}
 		
 		//DUMP FINAL DATA
 		void dump_book_list() {
-			fstream f;f.open("Book_list.txt", ios::out);f.close();
+			fstream f;f.open("Book_list.txt", ios::out);
 			for (vector<Book>::iterator i = book_list.begin(); i !=book_list.end(); i++){
 				i->write();
 			}
+			f.close();
 		}
 		void dump_journal_list() {
-			fstream f;f.open("Journal_list.txt", ios::out);f.close();
+			fstream f;f.open("Journal_list.txt", ios::out);
 			for (vector<Journal>::iterator i = journal_list.begin(); i != journal_list.end(); i++) {
 				i->write();
 			}
+			f.close();
 		}
 		void dump_student_list() {
-			fstream f;f.open("Student_list.txt", ios::out);f.close();
+			fstream f;f.open("Student_list.txt", ios::out);
 			for (vector<Student>::iterator i = student_list.begin(); i != student_list.end(); i++) {
 				i->write();
 			}
+			f.close();
 		}
 		void dump_faculty_list() {
-			fstream f;f.open("Faculty_list.txt",ios::out);f.close();
+			fstream f;f.open("Faculty_list.txt",ios::out);
 			for (vector<Faculty>::iterator i = faculty_list.begin(); i != faculty_list.end(); i++) {
 				i->write();
 			}
+			f.close();
+		}
+		void dump_transaction_list(){ 
+			fstream f;f.open("Transaction_list.txt",ios::out);
+			for (vector<Transactions>::iterator i = transaction_list.begin(); i != transaction_list.end(); i++) {
+				//i->write();
+			}
+			f.close();
 		}
 
-		//UNFINISHED BUG VECTOR ITERATOR POINTER
-		Book*    search_book(int id){
-			for(vector<Book>::iterator i=book_list.begin();i!=book_list.end();++i)
-				if(i->get_id()==id)
-					return i;
-			return NULL;
-		}
-		Journal* search_journal(int id){
-			for(vector<Journal>::iterator i=journal_list.begin();i!=journal_list.end();++i)
-				if(i->get_id()==id)
-					return NULL;
-			return NULL;
-		}
-		Student* search_student(int roll){
-			for(vector<Student>::iterator i=student_list.begin();i!=student_list.end();++i)
-				if(i->get_roll()==roll)
-					return NULL;
-			return NULL;
-		}
-		Faculty* search_faculty(int roll){
-			for(vector<Faculty>::iterator i=faculty_list.begin();i!=faculty_list.end();++i)
-				if(i->get_roll()==roll)
-					return NULL;
-			return NULL;
-		}
 
 	public:
 		//CONSTRUCTOR TO ALL DATA FOR THE FIRST TIME
@@ -358,8 +480,36 @@ class Library{
 			dump_journal_list();
 			dump_student_list();
 			dump_faculty_list();
+			dump_transaction_list();
 		}
-		
+
+
+		//SEARCH FUNCTIONS
+		Book*    search_book(int id){
+			for(vector<Book>::iterator i=book_list.begin();i!=book_list.end();++i)
+				if(i->get_id()==id)
+					return &(*i);
+			return NULL;
+		}
+		Journal* search_journal(int id){
+			for(vector<Journal>::iterator i=journal_list.begin();i!=journal_list.end();++i)
+				if(i->get_id()==id)
+					return &(*i);
+			return NULL;
+		}
+		Student* search_student(int roll){
+			for(vector<Student>::iterator i=student_list.begin();i!=student_list.end();++i)
+				if(i->get_roll()==roll)
+					return &(*i);
+			return NULL;
+		}
+		Faculty* search_faculty(int roll){
+			for(vector<Faculty>::iterator i=faculty_list.begin();i!=faculty_list.end();++i)
+				if(i->get_roll()==roll)
+					return &(*i);
+			return NULL;
+		}
+
 		//ADDING NEW BOOKS JOURNALS STUDENTS OR FACULTY AND WRITING IT TO THE FILE END
 		void add_book(){
 			int i,c;string n;
@@ -456,7 +606,11 @@ class Library{
 			ffaculty_list << endl;
 			ffaculty_list.close();*/
 		}	
-		
+		void add_transaction(Library *L,char it,char ip,char tt,int id,int roll,int card_no){
+			Transactions T(L,it,ip,tt,id,roll,card_no);
+			transaction_list.push_back(T);
+		}
+
 		//DISPLAY WHOLE LISTS
 		void display_book_list(){
 			cout<<"-------------------BOOK LIST-------------------"<<endl;
@@ -484,15 +638,19 @@ class Library{
 				i->display_faculty();
 			}
 		}
+		void display_transaction_list(){
+			cout<<"-------------------FACULTY LIST-------------------"<<endl;
+			for(vector<Transactions>::iterator i=transaction_list.begin();i!=transaction_list.end();++i){
+				i->display_transaction();
+			}
+		}
 };
+
+
 int main(){
 	Library L;
-	L.display_book_list();
-	L.display_journal_list();
-	L.display_student_list();
-	L.display_faculty_list();
-	L.add_book();
-	while (true) {
+	int choice;
+	while (choice !=-1) {
 		cout << endl;
 		cout << "Enter Choice:" << endl;
 		cout << "1.Add New " << endl;
@@ -500,8 +658,10 @@ int main(){
 		cout << "3.Return Book " << endl;
 		cout << "4.Issue Journal" << endl;
 		cout << "5.Return Journal" << endl;
+		cout << "6.Display All" << endl;
+		cout << "7.Display Transactions " <<endl;
 		cout << "Any other option to exit" << endl;
-		int choice;cin >> choice;
+		cin >> choice;
 		switch (choice) {
 			case 1:{
 				cout << "1.Book " << endl;
@@ -538,9 +698,65 @@ int main(){
 				switch (choice2) {
 					case 1: {
 						//ISSUE BOOK TO STUDENT
+						int id;
+						cout<<"Enter Book Id :";
+						cin >> id;
+						Book* b=L.search_book(id);
+						if(b==NULL || b->get_copies()==0){
+							cout<<"Wrong Book id"<<endl;
+							break;
+						}
+						else if( b->get_copies()==0){
+							cout<<"No Books Left"<<endl;
+							break;
+						}
+						cout<<"Enter Student Roll :";
+						int roll;
+						cin>>roll;
+						Student* s=L.search_student(roll);
+						if(s==NULL){
+							cout<<"Wrong Student roll"<<endl;
+							break;
+						}
+						int card_no;
+						cout<<"Enter Card No";
+						cin>>card_no;
+						if(!s->is_empty(card_no)){
+							cout<<"Card is not free";
+							break;
+						}
+						L.add_transaction(&L,'B','S','I',id,roll,card_no);
 					}
 					case 2: {
 						//ISSUE BOOK TO FACULTY
+						int id;
+						cout<<"Enter Book Id :";
+						cin >> id;
+						Book* b=L.search_book(id);
+						if(b==NULL || b->get_copies()==0){
+							cout<<"Wrong Book id"<<endl;
+							break;
+						}
+						else if( b->get_copies()==0){
+							cout<<"No Books Left"<<endl;
+							break;
+						}
+						cout<<"Enter Faculty Roll :";
+						int roll;
+						cin>>roll;
+						Faculty* f=L.search_faculty(roll);
+						if(f==NULL){
+							cout<<"Wrong Faculty roll"<<endl;
+							break;
+						}
+						int card_no;
+						cout<<"Enter Card No";
+						cin>>card_no;
+						if(!f->is_empty(card_no)){
+							cout<<"Card is not free";
+							break;
+						}
+						L.add_transaction(&L,'B','F','I',id,roll,card_no);
 					}
 					default:
 						break;
@@ -554,9 +770,49 @@ int main(){
 				switch (choice2) {
 					case 1: {
 						//RETURN BOOK TO STUDENT
+						int id;
+						cout<<"Enter Book Id :";
+						cin >> id;
+						Book* b=L.search_book(id);
+						if(b==NULL || b->get_copies()==0){
+							cout<<"Wrong Book id"<<endl;
+							break;
+						}
+						cout<<"Enter Student Roll :";
+						int roll;
+						cin>>roll;
+						Student* s=L.search_student(roll);
+						if(s==NULL){
+							cout<<"Wrong Student roll"<<endl;
+							break;
+						}
+						int card_no;
+						cout<<"Enter Card No";
+						cin>>card_no;
+						L.add_transaction(&L,'B','S','R',id,roll,card_no);
 					}
 					case 2: {
 						//RETURN BOOK TO FACULTY
+						int id;
+						cout<<"Enter Book Id :";
+						cin >> id;
+						Book* b=L.search_book(id);
+						if(b==NULL || b->get_copies()==0){
+							cout<<"Wrong Book id"<<endl;
+							break;
+						}
+						cout<<"Enter Faculty Roll :";
+						int roll;
+						cin>>roll;
+						Student* s=L.search_student(roll);
+						if(s==NULL){
+							cout<<"Wrong Faculty roll"<<endl;
+							break;
+						}
+						int card_no;
+						cout<<"Enter Card No";
+						cin>>card_no;
+						L.add_transaction(&L,'B','F','R',id,roll,card_no);
 					}
 					default:
 						break;
@@ -565,10 +821,49 @@ int main(){
 			}
 			case 4: {
 				//ISSUE JOURNAL TO FACULTY
+				int id;
+				cout<<"Enter Journal Id :";
+				cin >> id;
+				Journal* j=L.search_journal(id);
+				if(j==NULL || j->get_copies()==0){
+					cout<<"Wrong Journal id"<<endl;
+					break;
+				}
+				else if( j->get_copies()==0){
+					cout<<"No Journal Left"<<endl;
+					break;
+				}
+				cout<<"Enter Faculty Roll :";
+				int roll;
+				cin>>roll;
+				Faculty* f=L.search_faculty(roll);
+				if(f==NULL){
+					cout<<"Wrong Faculty roll"<<endl;
+					break;
+				}
+				int card_no;
+				cout<<"Enter Card No";
+				cin>>card_no;
+				if(!f->is_empty(card_no)){
+					cout<<"Card is not free";
+					break;
+				}
+				L.add_transaction(&L,'J','F','I',id,roll,card_no);
 				break;
 			}
 			case 5: {
 				//RETURN JOURNAL TO FACULTY
+				break;
+			}
+			case 6: {
+				L.display_book_list();
+				L.display_journal_list();
+				L.display_student_list();
+				L.display_faculty_list();
+				break;
+			}
+			case 7: {
+				L.display_transaction_list();
 				break;
 			}
 			default:

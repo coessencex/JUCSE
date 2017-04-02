@@ -5,11 +5,11 @@ Cormen
 
 1002
 Hopkins
-11
+10
 
 1003
 Arihant
-100
+99
 
 1004
 Digital
@@ -34,3 +34,11 @@ mano
 1009
 mako
 30
+
+12
+agfaf
+5
+
+1010
+Gaounkar
+7
