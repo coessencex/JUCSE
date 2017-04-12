@@ -11,12 +11,23 @@ import java.util.*;
  */
 public class Doctor extends Person{
     static int noOfDoc=1;
-    int id;
     ArrayList<Patient> patientList=new ArrayList(); 
     
     Doctor(String name,String address,String phone){
         super(name,address,phone);
         this.id=noOfDoc++;
+    }
+    public Patient searchPatient(int id){
+        for(Patient p:patientList){
+            if(p.id==id){
+                return p; 
+            }
+        }return null;
+    }
+    public void displayPatientList(){
+        for(Patient p:patientList){
+            p.displayName();
+        }
     }
     public boolean assignPatient(Patient P){
         patientList.add(P);

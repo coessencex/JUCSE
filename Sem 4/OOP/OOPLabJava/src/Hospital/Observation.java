@@ -18,6 +18,17 @@ public class Observation {
         this.temperature=temperature;
         this.date=new Date();
     }
+    Observation(){
+        this.bloodPressure=0;
+        this.temperature=0;
+        this.date=new Date();
+    }
+    void takeReadings(){
+        Scanner sc=new Scanner(System.in);
+        System.out.print("Enter Temp: ");this.temperature=sc.nextFloat();
+        System.out.print("Enter BP  : ");this.bloodPressure=sc.nextFloat();
+        
+    }
     void display(){
         System.out.print("Temperature:"+this.temperature+"\nBP: "+this.bloodPressure+"\nDate: "+this.date);
     }

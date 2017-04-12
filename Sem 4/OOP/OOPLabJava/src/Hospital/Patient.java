@@ -12,20 +12,34 @@ import java.util.ArrayList;
  * @author The Guardian
  */
 public class Patient extends Person {
-    static int noOfPatient=1;
-    int id;
+    static int noOfPatientAdmited=0;
+    static int noOfPatientDischarged=0;
+    boolean admited;
     Doctor doctor;
-    ArrayList observationList=new ArrayList();
+    ArrayList<Observation> observationList=new ArrayList<Observation>();
     
     Patient(String name,String address,String phone){
         super(name,address,phone);
-        this.id=noOfPatient++;
+        this.id=++noOfPatientAdmited;
+        this.admited=true;
     }
-    
-    
-    
+    void discharge(){
+        noOfPatientDischarged++;
+        admited=false;
+    }
+    void assignDoctor(Doctor doc){
+        this.doctor=doc;
+    }
     void recordObservation(float bp,float temp){
         observationList.add(new Observation(bp,temp));
+    }
+    void recordObservation(Observation ov){
+        observationList.add(ov);
+    }
+    void displayObservations(){
+        for(Observation ob:observationList){
+            ob.display();
+        }
     }
 
 }

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Assignment3;
+package assignment3;
 
 /**
  *
@@ -38,8 +38,12 @@ class Item{
             }
         
         
-        public void updateRate(double r){
-            this.rate=r;
+        public boolean updateRate(double r){
+            if(r>0){
+                this.rate=r;return true;
+            }else{
+                System.out.print("WRONG RATE");return false;
+            }
         }
         public void displayItem(){
             System.out.println("Code: "+code);
@@ -114,8 +118,8 @@ public class ItemList {
                     if(search(code)!=null){
                          System.out.println("Enter New Rate :");
                         double rate=Double.parseDouble(br.readLine());
-                        search(code).updateRate(rate);
-                        System.out.println("RATE UPDATED SUCCESSFULLY");
+                        if(search(code).updateRate(rate)==true)
+                            System.out.println("RATE UPDATED SUCCESSFULLY");
                     } else {
                         System.out.println("WRONG CODE");
                     }
