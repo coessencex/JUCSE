@@ -15,31 +15,35 @@ import javax.script.ScriptException;
  * @author The Guardian
  */
 public class Expression {
-    private int[] nextIndex;
+    //private int[] nextIndex;
     StringBuffer exp;
     
     //CONSTRUCTORS
     Expression(){
         exp=new StringBuffer("");
-        nextIndex=new int[exp.length()];
-        Arrays.fill(nextIndex, 0);
+        //nextIndex=new int[exp.length()];
+        //Arrays.fill(nextIndex, 0);
     }
     Expression(String expression){
         this.exp=new StringBuffer(expression);        
-        nextIndex=new int[exp.length()];
-        Arrays.fill(nextIndex, 0);
+        //nextIndex=new int[exp.length()];
+        //Arrays.fill(nextIndex, 0);
     }
     Expression(StringBuffer expression){
         this.exp=expression;        
-        nextIndex=new int[exp.length()];
-        Arrays.fill(nextIndex, 0);
+        //nextIndex=new int[exp.length()];
+        //Arrays.fill(nextIndex, 0);
     }
     
     //EXPRESSION MODIFICAION
+    public String get(){
+        return this.exp.toString();
+    }
     public void set(String expression){
         this.exp=new StringBuffer(expression);
-        this.nextIndex=new int[exp.length()];
-        Arrays.fill(nextIndex, 0);
+    }
+    public void reset(){
+        this.exp=new StringBuffer("");
     }
     public void appendEnd(char c){
         this.exp.append(c);
@@ -47,76 +51,16 @@ public class Expression {
     public void delEnd(){
         this.exp.deleteCharAt(this.exp.length()-1);
     }
-    
-    /*
-    private boolean indexUp(){
-        Stack<Character> brackets=new Stack<Character>();
-        Stack<Integer>   index=new Stack<Integer>();
-        for(int i=0;i<this.exp.length();i++){
-            char c=this.exp.charAt(i);
-            if(c!='(' && c!=')' && c!='{' && c!='}' && c!='[' && c!=']')
-                continue;
-            
-            switch(c){
-                case '(' :{
-                    brackets.add('(');
-                    index.add(i);
-                    break;
-                }
-                case '{' :{
-                    brackets.add('{');
-                    index.add(i);
-                    break;
-                }
-                case '[' :{
-                    brackets.add('[');
-                    index.add(i);
-                    break;
-                }
-                case ')' :{
-                    if(brackets.isEmpty()){
-                        return false;
-                    }
-                    if(brackets.lastElement()=='('){
-                        this.nextIndex[index.pop()]=i;
-                        brackets.pop();
-                    }
-                        
-                    break;
-                }
-                case '}' :{
-                    if(brackets.isEmpty()){
-                        return false;
-                    }
-                    if(brackets.lastElement()=='{'){
-                        this.nextIndex[index.pop()]=i;
-                        brackets.pop();
-                    }
-                    break;
-                }
-                case ']' :{
-                    if(brackets.isEmpty()){
-                        return false;
-                    }
-                    if(brackets.lastElement()=='['){
-                        this.nextIndex[index.pop()]=i;
-                        brackets.pop();
-                    }
-                    break;
-                }
-            }
+    public String solve()throws ScriptException {
+        ScriptEngineManager mgr = new ScriptEngineManager();
+        ScriptEngine engine = mgr.getEngineByName("JavaScript");
+        try{
+            return engine.eval(this.exp.toString()).toString();
+        } catch (ScriptException se) {
+            return "Wrong Input";
         }
-        if(brackets.isEmpty())
-            return true;
-        else 
-            return false;
-    }   
-    public BigInteger solve(String e){
-        BigInteger ans=new BigInteger("0");
-        
-        return ans;
     }
-    */
+    
     
     
     public static void main(String args[])throws IOException,ScriptException {
