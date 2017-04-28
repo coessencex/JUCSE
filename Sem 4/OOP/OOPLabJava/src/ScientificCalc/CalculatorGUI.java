@@ -251,6 +251,11 @@ public class CalculatorGUI extends javax.swing.JFrame {
         });
 
         toThePower.setText("x^y");
+        toThePower.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                toThePowerActionPerformed(evt);
+            }
+        });
 
         plus.setText("+");
         plus.addActionListener(new java.awt.event.ActionListener() {
@@ -269,6 +274,11 @@ public class CalculatorGUI extends javax.swing.JFrame {
         });
 
         mod.setText("MOD");
+        mod.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                modActionPerformed(evt);
+            }
+        });
 
         multiply.setText("*");
         multiply.addActionListener(new java.awt.event.ActionListener() {
@@ -530,6 +540,14 @@ public class CalculatorGUI extends javax.swing.JFrame {
         inputArea.setText(inputArea.getText()+"6");
     }//GEN-LAST:event_sixActionPerformed
 
+    private void toThePowerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toThePowerActionPerformed
+        inputArea.setText(inputArea.getText()+"^");
+    }//GEN-LAST:event_toThePowerActionPerformed
+
+    private void modActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modActionPerformed
+        inputArea.setText(inputArea.getText()+"%");
+    }//GEN-LAST:event_modActionPerformed
+
 
     
     
@@ -567,7 +585,7 @@ public class CalculatorGUI extends javax.swing.JFrame {
         
         
     }
-    Expression e;
+    Expression e=new Expression();
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel basicOperatorPanel;
     private javax.swing.JButton closeParenthesis;
