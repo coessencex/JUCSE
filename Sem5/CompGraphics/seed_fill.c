@@ -21,6 +21,7 @@ int main(int argc, char const *argv[]) {
     drawPoly(points, n);
     // int points2[8] = {2,0,2,2,-2,2,-2,0};
     // drawPoly(points2, 4);
+    delay(5000);
     seedfill(0, -6, BLUE);
 
     delay(400000);

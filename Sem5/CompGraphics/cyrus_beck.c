@@ -1,12 +1,12 @@
 #include "graphics_utils.h"
 #include <stdio.h>
 void cyrus_beck(int x1, int y1, int x2, int y2, int* vertices, int n){
-    float tl = 0;
-    float tu = 1;
+    float tl = 1;
+    float tu = 0;
     int i;
     for(i=0;i<n;i++){
-        printf("edge %d\n",i );
-        printf("%d %d \n", vertices[((2*i)%n+2)], vertices[((2*i)%n)]);
+        // printf("edge %d\n",i );
+        // printf("%d %d \n", vertices[((2*i)%n+2)], vertices[((2*i)%n)]);
         float dx = (float)(vertices[((2*i)%n+2)] - vertices[((2*i)%n)]);
         float dy = (float)(vertices[((2*i)%n+3)] - vertices[((2*i)%n+1)]);
         float n_i = -dy;
@@ -17,24 +17,24 @@ void cyrus_beck(int x1, int y1, int x2, int y2, int* vertices, int n){
         float f_y = vertices[(2*i+3)%n];
         float Wn = (x1-f_x)*n_i + (y1-f_y)*n_j;
         float Dn = D_i*n_i + D_j*n_j;
-        printf("D_i=%f D_j=%f n_i=%f n_j=%f\n", D_i, D_j, n_i, n_j);
+        // printf("D_i=%f D_j=%f n_i=%f n_j=%f\n", D_i, D_j, n_i, n_j);
         // D.n == 0 Reject
         if(Dn == 0){
             if(Wn<0) return;
         } else {
             float t = - Wn/Dn;
             if (Dn > 0){
-                printf("DN>0\n" );
+                // printf("DN>0\n" );
                 if(t>1) return;
                 if(t>tl) tl = t;
             } else {
-                printf("DN<0\n" );
+                // printf("DN<0\n" );
                 if(t<0) return;
                 if(t<tu) tu = t;
             }
         }
     }
-    printf("%f %f\n", tl, tu);
+    // printf("%f %f\n", tl, tu);
     int X1 = (int)((float)x1 + tl*(float)(x2-x1));
     int Y1 = (int)((float)y1 + tl*(float)(y2-y1));
     int X2 = (int)((float)x1 + tu*(float)(x2-x1));
@@ -63,7 +63,7 @@ int main(int argc, char const *argv[]) {
 
 
         initialiseGraph();
-        // grid();
+        grid();
 
         drawColorPoly(box, n, GREEN);
         for(i=0;i<l;i++){

@@ -12,7 +12,7 @@ int main(int argc, char const *argv[]) {
 
     start = clock();
     int i;
-    for(i=0;i<10;i++)
+    // for(i=0;i<1000;i++)
     bresenham(1, 1, -9, -9);
     end = clock();
     cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;

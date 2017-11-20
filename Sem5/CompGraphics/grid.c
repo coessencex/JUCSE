@@ -60,8 +60,8 @@ int main()
     int gd = DETECT, gm;
     initgraph(&gd, &gm, NULL);
     grid();
-    drawPixel(0, 0, RED);
-    naiveDrawLine(0,0,10,10);
+    // drawPixel(0, 0, RED);
+    // naiveDrawLine(0,0,10,10);
 
     delay(4000000000);
     closegraph();

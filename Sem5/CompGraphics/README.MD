@@ -64,7 +64,9 @@ void grid(){
     }
 }
 ```
-> Output: ![Grid](images/grid.jpg)
+> Output:
+
+![Grid](images/grid.jpg)
 
 Since it's used to many other files I made a `graphics_utils.h` file and put all the basic codes in it. Then it was imported everytime.
 
@@ -254,7 +256,7 @@ I implemented it in the previous section in the `graphics_utils.h` file
 |----|----|
 |1.6000 sec|1.4666 sec|
 
-> ![Bresenham](images/bresenham.jpg)
+![Bresenham](images/bresenham.jpg)
 ---
 ## 3. Circle Drawing Algorithm
 
@@ -308,7 +310,9 @@ int main(){
 }
 ```
 
-> Output: ![Bresenham](images/circle.gif)
+> Output:
+
+![Circle](images/circle2.gif)
 
 ---
 ## 4. Seed fill and Scan line fill
@@ -332,7 +336,8 @@ void seedfill(int x, int y, int boundaryColor){
 ```
 
 > Output: SeedFill
-> ![seedfill](images/seedfill.gif)
+
+![seedfill](images/seedfill.gif)
 
 ---
 ## 5. Suderland-Cohen Line Clipping
@@ -434,7 +439,9 @@ void suderland_cohen(int x1, int y1, int x2, int y2, int* clipWindow){
 }
 ```
 
-> Output: ![SuderlandCohen](images/suderland-cohen.jpg)
+> Output:
+
+![SuderlandCohen](images/suderland-cohen.jpg)
 
 ---
 ## 6. Cyrus-Beck Line Clipping Algorithm
@@ -483,7 +490,9 @@ void cyrus_beck(int x1, int y1, int x2, int y2, int* vertices, int n){
 
 ```
 
-> Output: ![cyrus_beck](images/cyrus-beck.jpg)
+> Output:
+
+![cyrus_beck](images/cyrus-beck.jpg)
 
 ---
 ## 7. Rotation and Translation
@@ -540,7 +549,8 @@ int main(int argc, char const *argv[]) {
 > * Initial figure in RED
 > * Rotation by $90^\circ$ in YELLOW
 > * Translation by $(-7,+3)$
-> ![rotate-then-translate](images/rotate-then-translate.jpg)
+
+![rotate-then-translate](images/rotate-then-translate.jpg)
 
 ---
 ## 7. Scaling and Shearing
@@ -599,10 +609,26 @@ int main(int argc, char const *argv[]) {
 > * Shear by $(sx,sy) = (\pi/7, 0)$ in YELLOW
 > * Translation by $(-16,0)$ in CYAN
 > * Scaling by $(2,2)$ in GREEN
-> ![Scale Shrear](images/scale-shear.jpg)
+
+![Scale Shrear](images/scale-shear.jpg)
 
 ---
 # Solar System
+
+The solar-system consists of **planets** and **asteroids**. Moving in elliptical orbits around the sun.
+
+### Constants
+* **planet_a** - ellipse path a
+* **planet_b** - ellipse path b
+* **planet_speed** - revolution speed
+* **planet_theta** - starting position
+* **planet_radius** - size of planet
+* **planet_color** - trivial
+### Classes
+* **HeavenlyBody**
+* **Planet** - defines properties of the planet
+* **Asteroid** - defines the group of asteroids
+* **SolarSystem** - cluster of planets and asteroids
 
 ```cpp
 #include <iostream>
@@ -777,4 +803,5 @@ int main() {
 
 ---
 > Output:
-> ![Scale Shrear](images/solar-system.gif)
+
+![Scale Shrear](images/solar-system.gif)

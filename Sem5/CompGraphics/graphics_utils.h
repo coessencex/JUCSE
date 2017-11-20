@@ -6,6 +6,7 @@
 #define SCALE 10
 #define AXIS_COLOR GREEN
 #define COLOR BLUE
+#define PI 3.14159265
 const int TOP = 8;
 const int BOTTOM = 4;
 const int RIGHT = 2;
@@ -92,7 +93,6 @@ void dda(int x1, int y1, int x2, int y2){
             drawPixel(i, y1);
         }
     } else {
-        printf("here\n");
         float dx, dy, len;
         if(abs(x1-x2)>abs(y1-y2)) {
             len = abs(x1-x2);
@@ -107,7 +107,6 @@ void dda(int x1, int y1, int x2, int y2){
 
         int i=0;
         while (i<=len) {
-            printf("%f %f\n", x, y);
             drawPixel((int)x,(int)y);
             x += dx;
             y += dy;
@@ -322,4 +321,42 @@ void midpoint_clip(int x1, int y1, int x2, int y2, int* clipWindow){
                 midpoint_clip(x1, y1, m_x, m_y, clipWindow);
                 midpoint_clip(m_x, m_y, x2, y2, clipWindow);
         }
+}
+
+//2D Transformation
+void rotate(int* points, int n, double theta){
+    int i;
+    for(i=0;i<n;i++){
+        double x = points[2*i+0];
+        double y = points[2*i+1];
+        points[2*i+0] = (int)(x*cos(theta)-y*sin(theta));
+        points[2*i+1] = (int)(x*sin(theta)+y*cos(theta));
+    }
+}
+void translate(int* points, int n, int shift_x, int shift_y){
+    int i;
+    for(i=0;i<n;i++){
+        double x = points[2*i+0];
+        double y = points[2*i+1];
+        points[2*i+0] = (int)(x+shift_x);
+        points[2*i+1] = (int)(y+shift_y);
+    }
+}
+void scale(int* points, int n, double scale_x, double scale_y){
+    int i;
+    for(i=0;i<n;i++){
+        double x = points[2*i+0];
+        double y = points[2*i+1];
+        points[2*i+0] = (int)(x*scale_x);
+        points[2*i+1] = (int)(y+scale_y);
+    }
+}
+void shear(int* points, int n, double shear_x, double shear_y){
+    int i;
+    for(i=0;i<n;i++){
+        double x = points[2*i+0];
+        double y = points[2*i+1];
+        points[2*i+0] = (int)(x + y*shear_x);
+        points[2*i+1] = (int)(y + x*shear_y);
+    }
 }
